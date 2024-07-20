@@ -1,0 +1,62 @@
+use std::str::FromStr;
+use std::sync::Arc;
+
+use crate::ast::*;
+
+grammar;
+
+pub SimplExpr: Expr = {
+  Const => Arc::new(ExprX::Const(<>)),
+  "(" <e:Expr> ")" => e,
+  identifier => Arc::new(ExprX::Ident(<>))
+}
+
+pub Expr: Expr = {
+    #[precedence(level="0")]
+    SimplExpr => <>,
+    Cmp => <>,
+    #[precedence(level="1")] #[assoc(side="left")]
+    <l:Expr> "+" <r:Expr> => Arc::new(ExprX::BinOp(BinOp::Add, l, r)),
+    <l:Expr> "-" <r:Expr> => Arc::new(ExprX::BinOp(BinOp::Sub, l, r)),
+    #[precedence(level="2")] #[assoc(side="left")]
+    <l:Expr> "*" <r:Expr> => Arc::new(ExprX::BinOp(BinOp::Mul, l, r)),
+};
+
+pub Cmp: Expr = {
+    <l:SimplExpr> "<" <r:SimplExpr> => Arc::new(ExprX::CmpOp(Cmp::Lt, l, r)),
+    <l:SimplExpr> "<=" <r:SimplExpr> => Arc::new(ExprX::CmpOp(Cmp::Lte, l, r)),
+    <l:SimplExpr> ">" <r:SimplExpr> => Arc::new(ExprX::CmpOp(Cmp::Gt, l, r)),
+    <l:SimplExpr> ">=" <r:SimplExpr> => Arc::new(ExprX::CmpOp(Cmp::Gte, l, r)),
+    <l:SimplExpr> "==" <r:SimplExpr> => Arc::new(ExprX::CmpOp(Cmp::Eq, l, r))
+};
+
+
+pub Stmt: Statement = {
+  "var" <i:identifier> "=" <r:Expr> ";" => Arc::new(StatementX::DeclAssign(i, r)),
+  "if" "(" <e:Expr> ")" "{" <stmts:Stmt*> "}" => Arc::new(StatementX::If(e, stmts)),
+  "while" "(" <e:Expr> ")" "{" <stmts:Stmt*> "}" => Arc::new(StatementX::While(e, stmts)),
+  "return" <e:Expr> => Arc::new(StatementX::Return(e))
+};
+
+pub Param: Param = {
+  <n:Num> <i:identifier> => Arc::new(ParamX{num_words:n, name: i})
+}
+
+pub Function: Function = {
+  "fun" <i:identifier> <pp:todo!()> "{" <ss:Stmt*> "}" => Arc::new(FunctionX{export: false, name: i, params: pp, body: ss}),
+
+  "export" "fun" <i:identifier> "(" <pp:Params> ")" "{" <ss:Stmt*> "}" => Arc::new(FunctionX{export: true, name: i, params: pp, body: ss}),
+};
+
+identifier: Ident = {
+    r"[_a-zA-Z][_a-zA-Z0-9]*" => Arc::new(<>.to_string())
+};
+
+
+Const: Const = {
+    Num => Arc::new(ConstX::Nat(<>)), 
+};
+
+Num: u64 = {
+    r"[0-9]+" => u64::from_str(<>).unwrap(),
+};
