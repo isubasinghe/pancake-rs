@@ -37,7 +37,9 @@ pub enum ExprX {
     BinOp(BinOp, Expr, Expr),
     CmpOp(Cmp, Expr, Expr),
     Const(Const),
-    Ident(Ident)
+    Ident(Ident),
+    Base,
+    WordSize
 }
 
 pub type Expr = Arc<ExprX>;

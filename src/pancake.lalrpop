@@ -13,6 +13,8 @@ pub SimplExpr: Expr = {
 
 pub Expr: Expr = {
     #[precedence(level="0")]
+    "@base" => Arc::new(ExprX::Base),
+    "WORD_SIZE" => Arc::new(ExprX::WordSize),
     SimplExpr => <>,
     Cmp => <>,
     #[precedence(level="1")] #[assoc(side="left")]
@@ -43,9 +45,23 @@ pub Param: Param = {
 }
 
 pub Function: Function = {
-  "fun" <i:identifier> <pp:todo!()> "{" <ss:Stmt*> "}" => Arc::new(FunctionX{export: false, name: i, params: pp, body: ss}),
+  "fun" <i:identifier> "(" <pp:Comma<Param>> ")" "{" <ss:Stmt*> "}" => Arc::new(FunctionX{export: false, name: i, params: pp, body: ss}),
 
-  "export" "fun" <i:identifier> "(" <pp:Params> ")" "{" <ss:Stmt*> "}" => Arc::new(FunctionX{export: true, name: i, params: pp, body: ss}),
+  "export" "fun" <i:identifier> "(" <pp:Comma<Param>> ")" "{" <ss:Stmt*> "}" => Arc::new(FunctionX{export: true, name: i, params: pp, body: ss}),
+};
+
+pub Program: Vec<Function> = {
+  <fs:Function*> => <>
+};
+
+Comma<T>: Vec<T> = { // (1)
+    <mut v:(<T> ",")*> <e:T?> => match e { // (2)
+        None => v,
+        Some(e) => {
+            v.push(e);
+            v
+        }
+    }
 };
 
 identifier: Ident = {
