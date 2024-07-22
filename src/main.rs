@@ -1,5 +1,6 @@
 mod ast;
 mod typecheck;
+mod codegen;
 
 use lalrpop_util::lalrpop_mod;
 lalrpop_mod!(pub pancake);
