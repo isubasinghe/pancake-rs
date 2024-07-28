@@ -2,12 +2,17 @@ mod ast;
 mod typecheck;
 mod codegen;
 
+use inkwell::context::Context;
 use lalrpop_util::lalrpop_mod;
 lalrpop_mod!(pub pancake);
 
 fn main() {
     let f = "fun asd() { var rx_return = 1; }";
-    println!("{:?}", pancake::FunctionParser::new().parse(f));
+    let a = pancake::FunctionParser::new().parse(f).unwrap();
+    let context = Context::create();
+    let codegen = codegen::CodeGen::new(&context, "something");
+    codegen.compile_fn(a, "out.llc");
+
 }
 
 #[test]

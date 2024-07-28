@@ -18,11 +18,22 @@
         # For `nix build` & `nix run`:
         defaultPackage = naersk'.buildPackage {
           src = ./.;
+          nativeBuildInputs = [
+            pkgs.libffi
+            pkgs.libxml2
+          ];
         };
 
         # For `nix develop` (optional, can be skipped):
         devShell = pkgs.mkShell {
-          nativeBuildInputs = with pkgs; [ rustc cargo llvmPackages_17.libllvm llvmPackages_17.bintools-unwrapped];
+          nativeBuildInputs = with pkgs; [ 
+            rustc 
+            cargo 
+            llvmPackages_17.libllvm 
+            llvmPackages_17.bintools-unwrapped
+            libffi
+            libxml2
+          ];
         };
       }
     );
