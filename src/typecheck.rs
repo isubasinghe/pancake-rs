@@ -1,17 +1,16 @@
-
 use std::collections::HashMap;
 use std::sync::Arc;
 
 use crate::ast::*;
 
 pub struct CtxX {
-    fns: HashMap<Ident, Function>
+    fns: HashMap<Ident, Function>,
 }
 
 pub type Ctx = Arc<CtxX>;
 
 pub struct FnCtx {
-    gctx: Ctx
+    gctx: Ctx,
 }
 
 pub fn type_check_program(fns: Vec<Function>) {
@@ -20,10 +19,10 @@ pub fn type_check_program(fns: Vec<Function>) {
     for f in fns {
         kfns.insert(f.name.clone(), f);
     }
-    let ctx = Arc::new(CtxX{fns: kfns});
+    let ctx = Arc::new(CtxX { fns: kfns });
 
-    for (_, f) in &ctx.fns  {
-        let mut fnctx = FnCtx {gctx: ctx.clone()};
+    for (_, f) in &ctx.fns {
+        let mut fnctx = FnCtx { gctx: ctx.clone() };
         for stmt in &f.body {
             type_check_stmt(&mut fnctx, stmt.clone());
         }
@@ -31,12 +30,11 @@ pub fn type_check_program(fns: Vec<Function>) {
 }
 pub enum Typ {
     Bool,
-    Nat
+    Nat,
 }
 
 pub fn type_check_expr(fnctx: &mut FnCtx, expr: Expr, typ: Typ) -> bool {
     false
-
 }
 
 pub fn type_check_stmt(fnctx: &mut FnCtx, stmt: Statement) -> bool {
@@ -49,12 +47,10 @@ pub fn type_check_stmt(fnctx: &mut FnCtx, stmt: Statement) -> bool {
                 let valid = type_check_stmt(fnctx, s.clone());
                 assert!(valid);
             }
-
-        },
-        StatementX::While(e, stmts) => {},
-        StatementX::Return(e) => {},
-        StatementX::DeclAssign(id, e) => {
-        },
+        }
+        StatementX::While(e, stmts) => {}
+        StatementX::Return(e) => {}
+        StatementX::DeclAssign(id, e) => {}
     };
     false
 }

@@ -1,6 +1,6 @@
 mod ast;
-mod typecheck;
 mod codegen;
+mod typecheck;
 
 use inkwell::context::Context;
 use lalrpop_util::lalrpop_mod;
@@ -12,7 +12,6 @@ fn main() {
     let context = Context::create();
     let codegen = codegen::CodeGen::new(&context, "something");
     codegen.compile_fn(a, "out.llc");
-
 }
 
 #[test]
@@ -29,16 +28,18 @@ fn param_test() {
 
 #[test]
 fn stmt_test() {
-    assert!(pancake::StmtParser::new().parse("var rx_return = 1;").is_ok());
+    assert!(pancake::StmtParser::new()
+        .parse("var rx_return = 1;")
+        .is_ok());
 }
 
 #[test]
 fn function_test() {
     assert!(pancake::FunctionParser::new().parse("fun asd() {}").is_ok());
-    assert!(pancake::FunctionParser::new().parse("fun asd(1 tx_return) { var rx_return = 1;}").is_ok());
+    assert!(pancake::FunctionParser::new()
+        .parse("fun asd(1 tx_return) { var rx_return = 1;}")
+        .is_ok());
 }
-
 
 #[test]
-fn fn_test() {
-}
+fn fn_test() {}

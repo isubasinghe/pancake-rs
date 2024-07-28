@@ -1,10 +1,7 @@
 use inkwell::builder::Builder;
 use inkwell::context::Context;
-use inkwell::execution_engine::{ExecutionEngine, JitFunction};
 use inkwell::module::Module;
-use inkwell::targets::{
-    CodeModel, FileType, InitializationConfig, RelocMode, Target, TargetMachine, TargetTriple,
-};
+use inkwell::targets::{CodeModel, FileType, RelocMode, Target, TargetTriple};
 use inkwell::types::BasicType;
 use inkwell::OptimizationLevel;
 use std::path::Path;
@@ -60,6 +57,8 @@ impl<'ctx> CodeGen<'ctx> {
             )
             .unwrap();
 
-        target_machine.write_to_file(&self.module, FileType::Assembly, Path::new(file)).unwrap();
+        target_machine
+            .write_to_file(&self.module, FileType::Assembly, Path::new(file))
+            .unwrap();
     }
 }

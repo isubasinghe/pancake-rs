@@ -1,6 +1,5 @@
 use std::sync::Arc;
 
-
 #[derive(Debug)]
 pub enum BinOp {
     Add,
@@ -10,17 +9,16 @@ pub enum BinOp {
 
 #[derive(Debug)]
 pub enum ConstX {
-    Nat(u64)
+    Nat(u64),
 }
 
 pub type Const = Arc<ConstX>;
 
 pub type Ident = Arc<String>;
 
-
 pub enum UOp {
     Neg,
-    Raw
+    Raw,
 }
 
 #[derive(Debug)]
@@ -29,7 +27,7 @@ pub enum Cmp {
     Lte,
     Gt,
     Gte,
-    Eq
+    Eq,
 }
 
 #[derive(Debug)]
@@ -39,11 +37,10 @@ pub enum ExprX {
     Const(Const),
     Ident(Ident),
     Base,
-    WordSize
+    WordSize,
 }
 
 pub type Expr = Arc<ExprX>;
-
 
 #[derive(Debug)]
 pub enum StatementX {
@@ -58,7 +55,7 @@ pub type Statement = Arc<StatementX>;
 #[derive(Debug)]
 pub struct ParamX {
     pub num_words: u64,
-    pub name: Ident 
+    pub name: Ident,
 }
 pub type Param = Arc<ParamX>;
 
@@ -67,7 +64,7 @@ pub struct FunctionX {
     pub export: bool,
     pub name: Ident,
     pub params: Vec<Param>,
-    pub body: Vec<Statement>
+    pub body: Vec<Statement>,
 }
 
 pub type Function = Arc<FunctionX>;
